@@ -1,0 +1,25 @@
+{
+    "name": "pmt/projet",
+    "autoload": {
+        "psr-4": {
+           "PMT\\SRC\\Entity\\":"src/entity/",
+           "PMT\\APP\\CORE\\ABSTRACT\\":"app/core/abstract/",
+           "PMT\\APP\\CORE\\":"app/core/",
+           "PMT\\APP\\CONFIG\\":"app/config/",
+           "PMT\\SRC\\CONTROLLER\\":"src/controller/",
+           "PMT\\SRC\\REPOSITORY\\":"src/repository/",
+           "PMT\\SRC\\SERVICE\\":"src/service/"
+
+        }
+    },
+    "authors": [
+        {
+            "name": "pmtfromd",
+            "email": "teuwpapamalick173@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.6"
+    }
+}
+
