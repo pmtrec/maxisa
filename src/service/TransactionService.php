@@ -13,7 +13,7 @@ class TransactionService {
         $this->transactionRepository = new transactionRepository();
     }
 
-    public function  getTran($id): ? TransactionEntity{
+    public function  getTran($id): ?array{
  
       return  $this->transactionRepository->SelectTransactionByCompte($id);
     }

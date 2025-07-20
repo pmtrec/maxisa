@@ -28,6 +28,7 @@ class UserRepository {
 
             if ($result) {
                 return UsersEntity::toObject($result);
+                
             }
 
             return null;

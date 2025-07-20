@@ -10,6 +10,8 @@ return [
         '/home'=> [CompteController::class,'show'],
         '/transaction'=> [TransactionController::class,'getTransactions'],
         '/acceuil'=> [homeController::class,'show'],
+        '/newcompte'=> [CompteController::class,'creationNewCompte'],
+      
 
         // '/home'=> [UserController::class,'store'],
         // '/afficherSolde'=> [CompteController::class,'getCompte'],
@@ -17,6 +19,7 @@ return [
     ],
     'POST'=> [
         '/login'=> [SecurityController::class,'login'],
+          '/secondaire/store'=> [CompteController::class,'addNewCompte'],
     ]
 
 ];

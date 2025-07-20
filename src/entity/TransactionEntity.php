@@ -8,24 +8,21 @@ class TransactionEntity extends AbstractEntity {
     private int $id;
     private string $date;
     private TypeTransaction $typetransaction;
-    private UsersEntity $user;
     private float $montant;
 
     public function __construct(
         int $id = 0,
         string $date = "",
         TypeTransaction $typetransaction = TypeTransaction::Depot,
-        UsersEntity $user = null,
         float $montant = 0.0
     ) {
         $this->id = $id;
         $this->date = $date;
         $this->typetransaction = $typetransaction;
-        $this->user = $user;
         $this->montant = $montant;
     }
 
-    public function toArray(): array {
+    public static function toArray(): array {
         return [
             "id" => $this->id,
             "date" => $this->date,
@@ -35,13 +32,12 @@ class TransactionEntity extends AbstractEntity {
         ];
     }
 
-    public function toObject($data): static {
+    public static function toObject($data): static {
         return new static(
-            $data->id ?? 0,
-            $data->date ?? '',
-            TypeTransaction::from($data->typetransaction ?? 'Depot'),
-            new UsersEntity(), // ⚠ à adapter selon le contexte réel
-            $data->montant ?? 0.0
+            $data['id'],
+            $data['date'],
+            TypeTransaction::from($data['type']),
+            $data['montant']
         );
     }
 

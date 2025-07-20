@@ -40,16 +40,16 @@ class SecurityController extends AbstractController {
     public function login() {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             extract($_POST);
-
+                //   var_dump($_POST);die;
+  
             $user = $this->service->login($phone,$password);
-    
+       
          
             if ($user) {
+                 
                 $this->session->set("user", $user);
-                
-                
                 header("Location: /home");
-               
+                // require_once __DIR__ ."/../../template/layout/base.layout.php";
                 
 
             }else{

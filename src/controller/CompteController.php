@@ -14,7 +14,7 @@ class CompteController extends AbstractController {
     private CompteService $compteService;
     
     
-      public function __construct( ){
+      public function __construct(){
         parent::__construct();
         $this->compteService = new CompteService();
     }
@@ -30,20 +30,26 @@ class CompteController extends AbstractController {
     // }
       
     public function show() {
-        //$this->renderHtml("home/transaction/transaction.php");
-        $user=$this->session->get("user");
-        
-        $userId =$user->getId();
-        
-        $compte= $this->compteService->getCompte($userId) ;
+    $user = $this->session->get("user");
+    
+    
 
-        $this->session->set("compte", $compte);
-       
-        header("Location : /transaction");
+    // if (!$user) {
+    //     header("Location: /login");
+    //     exit;
+    // }
 
+    $userId = $user->getId();
+    $compte = $this->compteService->getCompte($userId);
         
+
+    $this->session->set("compte", $compte);
+
+    header("Location: /transaction");
+    //  $this->renderHtml("home/transaction/transaction.php");
+   
+}
  
-    }
 
     public function index() {
 
@@ -62,5 +68,21 @@ class CompteController extends AbstractController {
 
     public function destroy() {
         // Supprime un utilisateur
+    }
+    public function creationNewCompte() {
+       $this->renderHtml("home/compte/formulaireCreation.html.php");
+    }
+    public function addNewCompte() {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            extract($_POST);
+            // var_dump($_POST);die();num_compte
+            
+           $user = $this->session->get("user");
+           $userId = $user->getId();
+        //    var_dump($userId);die();
+        $compteSecondaire = $this->compteService->addCompteSecondaire($userId, $num_telephone, $solde,$num_compte);
+         $this->renderHtml("home/compte/formulaireCreation.html.php");
+
+        }
     }
 }

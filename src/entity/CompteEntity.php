@@ -10,18 +10,19 @@ class CompteEntity extends AbstractEntity {
     private float $solde;
     private string $num_telephone;
     private string $date_creation;
-    private TypeCompte $TypeCompte;
+    private ?TypeCompte $TypeCompte;
     private ?UsersEntity $userr;
-    private array  $transaction=[];
+    private ?TransactionEntity $transaction;
 
     public function __construct(
-        int $id = 0,
+        ?int $id,
         string $num_compte = "",
         float $solde = 0.0,
-        string $num_telephone = "",
+        string $num_telephone = "",              // Non nullable string
         string $date_creation = "",
-        TypeCompte $TypeCompte =TypeCompte::Principal,
-
+        ?TypeCompte $TypeCompte = null,
+        ?UsersEntity $userr = null,
+        ?TransactionEntity $transaction = null
     ) {
         $this->id = $id;
         $this->num_compte = $num_compte;
@@ -33,18 +34,18 @@ class CompteEntity extends AbstractEntity {
         $this->transaction = $transaction;
     }
 
-    public static function toArray(): array {
-        return [
-            "id" => $this->id,
-            "num_compte" => $this->num_compte,
-            "solde" => $this->solde,
-            "num_telephone" => $this->num_telephone,
-            "date_creation" => $this->date_creation,
-            "type" => $this->TypeCompte?->toArray(),
-            "users" => $this->userr?->toArray(),
-            "transaction" => $this->transaction?->toArray()
-        ];
-    }
+ public static function toArray(): array {
+    return [
+        "id" => $this->id,
+        "num_compte" => $this->num_compte,
+        "solde" => $this->solde,
+        "num_telephone" => $this->num_telephone,
+        "date_creation" => $this->date_creation,
+        "type" => $this->TypeCompte?->toArray(),
+        "users" => $this->userr?->toArray(),
+        "transaction" => $this->transaction?->toArray()
+    ];
+}
 
     public static function toObject($data): static {
         return new static(
@@ -132,4 +133,6 @@ class CompteEntity extends AbstractEntity {
         $this->transaction = $transaction;
         return $this;
     }
+
+    
 }

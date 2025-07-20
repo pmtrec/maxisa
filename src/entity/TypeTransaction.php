@@ -2,8 +2,8 @@
 namespace PMT\SRC\Entity;
 
 enum TypeTransaction: string {
-    case Paiment = 'Paiement';
-    case Transfert = 'Transfert';
-    case Depot = 'Depot';
-    case Retrait = 'Retrait';
+    case PAIEMENT = 'PAIEMENT';
+    case TRANSERT = 'TRANSERT';
+    case DEPOT = 'DEPOT';
+    case RETRAIT = 'RETRAIT';
 }
