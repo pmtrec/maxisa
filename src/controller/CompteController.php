@@ -72,17 +72,28 @@ class CompteController extends AbstractController {
     public function creationNewCompte() {
        $this->renderHtml("home/compte/formulaireCreation.html.php");
     }
-    public function addNewCompte() {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            extract($_POST);
-            // var_dump($_POST);die();num_compte
-            
-           $user = $this->session->get("user");
-           $userId = $user->getId();
-        //    var_dump($userId);die();
-        $compteSecondaire = $this->compteService->addCompteSecondaire($userId, $num_telephone, $solde,$num_compte);
-         $this->renderHtml("home/compte/formulaireCreation.html.php");
+  public function addNewCompte() {
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        extract($_POST);
 
-        }
+        $user = $this->session->get("user");
+        $userId = $user->getId();
+
+        // Crée le nouveau compte secondaire
+        $this->compteService->addCompteSecondaire($userId, $num_telephone, $solde, $num_compte);
+
+        // Récupère tous les comptes secondaires de l'utilisateur
+        $comptesSecondaires = $this->compteService->listerCompteSecondaire($userId, 'CompteSecondaire');
+        $numberS=$this->compteService->listerNumberCompteSecondaire($userId, 'CompteSecondaire');
+        $this->session->set('numberS', $numberS);
+
+        var_dump($numberS);die();
+    
+        $this->renderHtml("home/compte/formulaireCreation.html.php", [
+            'comptes' => $comptesSecondaires
+        ]);
     }
+}
+
+
 }

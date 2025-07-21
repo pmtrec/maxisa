@@ -25,4 +25,13 @@ class CompteService{
     return $this->creationCompte->createCompteSecondaireByUserId($userId, $solde, $numTelephone);
 }
 
+  public function listerCompteSecondaire(int $userId, string $type): ?array {
+    return $this->repository->SelectAllFromCompteWhereTypeSecondaire($userId, $type);
+}
+  public function listerNumberCompteSecondaire(int $userId, string $type): ?array {
+    return $this->repository->SelectNumeroFromCompteWhereTypeSecondaire($userId, $type);
+}
+
+
+
 }

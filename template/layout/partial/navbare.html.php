@@ -60,8 +60,10 @@
                 
                 <!-- Comptes secondaires - Remplacer par votre boucle PHP -->
                 <?php 
+                // $num = $this->session->get("numberS");
+                // var_dump($num);die();
                 
-              
+                 
                 $comptesSecondaires = [
                     ['numero' => '+221 77 987 65 43', 'type' => 'Compte Secondaire'],
                     ['numero' => '+221 76 555 44 33', 'type' => 'Compte Secondaire'],

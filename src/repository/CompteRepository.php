@@ -30,31 +30,41 @@ class CompteRepository {
         }
 
     }
-      public function SelectAllFromCompteWhereTypeSecondaire(int $id,string $type):?CompteEntity{
-        try {
-              $sql = "SELECT * FROM compte WHERE user_id = :user_id type = :type ";
-    $stmt = $pdo->prepare($sql);
+     public function SelectAllFromCompteWhereTypeSecondaire(int $userId, string $type): ?array {
+    try {
+        $sql = "SELECT * FROM compte WHERE user_id = :user_id AND type = :type";
+        $stmt = $this->db->prepare($sql);
 
-    // Exécuter avec le paramètre sécurisé
-    $stmt->execute([
-        'type' => 'CompteSecondaire',
-        'user_id' => $id
+        $stmt->execute([
+            'user_id' => $userId,
+            'type' => $type
+        ]);
 
-    ]);
+        $comptes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $comptes ?: null;
 
-    // Récupérer les résultats
-    $comptes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Affichage pour test
-    foreach ($comptes as $compte) {
-        echo "Numéro de compte : " . $compte['num_compte'] . "<br>";
-        echo "Solde : " . $compte['solde'] . "<br>";
-        echo "<hr>";
+    } catch (\PDOException $e) {
+        throw new \Exception("Erreur récupération comptes secondaires : " . $e->getMessage());
     }
-             }
-      catch (\PDOException $e) {
-            throw new \Exception("Recuperation compte compte".$e->getMessage());
-        }
+}
 
+    public function SelectNumeroFromCompteWhereTypeSecondaire(int $userId, string $type): ?array {
+    try {
+        $sql = "SELECT num_telephone FROM compte WHERE user_id = :user_id AND type = :type";
+        $stmt = $this->db->prepare($sql);
+
+        $stmt->execute([
+            'user_id' => $userId,
+            'type' => $type
+        ]);
+
+        $comptes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $comptes ?: null;
+
+    } catch (\PDOException $e) {
+        throw new \Exception("Erreur récupération comptes secondaires : " . $e->getMessage());
     }
+}
+
+
 }
