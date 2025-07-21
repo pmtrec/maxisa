@@ -8,7 +8,9 @@
            "PMT\\APP\\CONFIG\\":"app/config/",
            "PMT\\SRC\\CONTROLLER\\":"src/controller/",
            "PMT\\SRC\\REPOSITORY\\":"src/repository/",
-           "PMT\\SRC\\SERVICE\\":"src/service/"
+           "PMT\\SRC\\SERVICE\\":"src/service/",
+           "PMT\\MIGRATIONS\\":"migrations/",
+           "PMT\\SEEDERS\\":"seeder/"
 
         }
     },

@@ -1,34 +1,50 @@
 <?php
-namespace Maxitsa\Seeder;
+
+namespace PMT\SEEDERS;
+
 
 use PDO;
 
 class Seeder {
     public static function seed(PDO $pdo) {
-       
-        $pdo->exec("TRUNCATE TABLE transaction, compte, personne RESTART IDENTITY CASCADE;");
+        // Vider les tables dans l'ordre inverse des relations (transactions → compte → users → typeuser)
+        $pdo->exec("TRUNCATE TABLE transactions, compte, users, typeuser RESTART IDENTITY CASCADE;");
 
-      
+        // Créer quelques types d’utilisateurs
+        $pdo->exec("
+            INSERT INTO typeuser (type_user_enum) VALUES 
+            ('admin'), 
+            ('caissier'), 
+            ('client');
+        ");
+
+        // Générer les mots de passe hashés
         $pass1 = password_hash('pass1', PASSWORD_DEFAULT);
         $pass2 = password_hash('pass2', PASSWORD_DEFAULT);
+        $pass3 = password_hash('pass3', PASSWORD_DEFAULT);
 
-        $pdo->exec("INSERT INTO personne (telephone, password, num_identite, photo_recto, photo_verso, prenom, nom, adresse, type_personne) VALUES
-            ('770000001', '$pass1', '1244343455666', 'recto1.jpg', 'verso1.jpg', 'Khouss', 'Ngom', 'Dakar', 'client'),
-            ('770000002', '$pass2', '1234899000999', 'recto2.jpg', 'verso2.jpg', 'Fallou', 'Senghor', 'Thies', 'client')");
+        // Ajouter des utilisateurs
+        $pdo->exec("
+            INSERT INTO users (nom, prenom, adresse, num_carte_identite, photorecto, photoverso, telephone, password, type_id) VALUES
+            ('Ngom', 'Khouss', 'Dakar', 'CNI123456', 'recto1.jpg', 'verso1.jpg', '770000001', '$pass1', 3),
+            ('Senghor', 'Fallou', 'Thies', 'CNI654321', 'recto2.jpg', 'verso2.jpg', '770000002', '$pass2', 3),
+            ('Fall', 'Mame', 'Ziguinchor', 'CNI789012', 'recto3.jpg', 'verso3.jpg', '770000003', '$pass3', 2);
+        ");
 
-     
-        $pdo->exec("INSERT INTO compte (telephone, solde, personne_id, type_compte) VALUES
-            ('770000001', 10000, 1, 'principal'),
-            ('770000002', 5000, 2, 'principal'),
-             ('770000003', 0, 1, 'secondaire'),
-            ('770000004', 0, 2, 'secondaire');
-            
-            ");
-            
+        // Ajouter des comptes
+        $pdo->exec("
+            INSERT INTO compte (num_compte, solde, user_id, type_type_compte_enum, num_telephone) VALUES
+            ('CPT001', 10000.00, 1, 'principal', '770000001'),
+            ('CPT002', 5000.00, 2, 'principal', '770000002'),
+            ('CPT003', 0.00, 1, 'secondaire', '770000004'),
+            ('CPT004', 0.00, 2, 'secondaire', '770000005');
+        ");
 
-     
-        $pdo->exec("INSERT INTO transaction (compte_id, montant, date, type_transaction) VALUES
-            (1, 2000, NOW(), 'depot'),
-            (2, 1000, NOW(), 'retrait')");
+        // Ajouter des transactions
+        $pdo->exec("
+            INSERT INTO transactions (date, compte_id, montant, type_type_transaction_enum) VALUES
+            (CURRENT_DATE, 1, 2000.00, 'depot'),
+            (CURRENT_DATE, 2, 1000.00, 'retrait');
+        ");
     }
 }

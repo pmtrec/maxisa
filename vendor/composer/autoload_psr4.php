@@ -14,6 +14,8 @@ return array(
     'PMT\\SRC\\REPOSITORY\\' => array($baseDir . '/src/repository'),
     'PMT\\SRC\\Entity\\' => array($baseDir . '/src/entity'),
     'PMT\\SRC\\CONTROLLER\\' => array($baseDir . '/src/controller'),
+    'PMT\\SEEDERS\\' => array($baseDir . '/seeder'),
+    'PMT\\MIGRATIONS\\' => array($baseDir . '/migrations'),
     'PMT\\APP\\CORE\\ABSTRACT\\' => array($baseDir . '/app/core/abstract'),
     'PMT\\APP\\CORE\\' => array($baseDir . '/app/core'),
     'PMT\\APP\\CONFIG\\' => array($baseDir . '/app/config'),

@@ -26,6 +26,8 @@ class ComposerStaticInit01d0a129799906609baf6492d592c578
             'PMT\\SRC\\REPOSITORY\\' => 19,
             'PMT\\SRC\\Entity\\' => 15,
             'PMT\\SRC\\CONTROLLER\\' => 19,
+            'PMT\\SEEDERS\\' => 12,
+            'PMT\\MIGRATIONS\\' => 15,
             'PMT\\APP\\CORE\\ABSTRACT\\' => 22,
             'PMT\\APP\\CORE\\' => 13,
             'PMT\\APP\\CONFIG\\' => 15,
@@ -72,6 +74,14 @@ class ComposerStaticInit01d0a129799906609baf6492d592c578
         'PMT\\SRC\\CONTROLLER\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src/controller',
+        ),
+        'PMT\\SEEDERS\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/seeder',
+        ),
+        'PMT\\MIGRATIONS\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/migrations',
         ),
         'PMT\\APP\\CORE\\ABSTRACT\\' => 
         array (
