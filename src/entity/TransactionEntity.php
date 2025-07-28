@@ -7,13 +7,13 @@ use PMT\APP\CORE\ABSTRACT\AbstractEntity;
 class TransactionEntity extends AbstractEntity {
     private int $id;
     private string $date;
-    private TypeTransaction $typetransaction;
+    private string $typetransaction; // Changé pour string au lieu d'enum
     private float $montant;
 
     public function __construct(
         int $id = 0,
         string $date = "",
-        TypeTransaction $typetransaction = TypeTransaction::Depot,
+        string $typetransaction = "depot",
         float $montant = 0.0
     ) {
         $this->id = $id;
@@ -27,17 +27,16 @@ class TransactionEntity extends AbstractEntity {
             "id" => $this->id,
             "date" => $this->date,
             "montant" => $this->montant,
-            "typetransaction" => $this->typetransaction->value,
-            "user_id" => $this->user?->getId() ?? null
+            "typetransaction" => $this->typetransaction
         ];
     }
 
     public static function toObject($data): static {
         return new static(
-            $data['id'],
-            $data['date'],
-            TypeTransaction::from($data['type']),
-            $data['montant']
+            $data['id'] ?? 0,
+            $data['date'] ?? '',
+            $data['type_type_transaction_enum'] ?? 'depot',
+            floatval($data['montant'] ?? 0.0)
         );
     }
 
@@ -61,21 +60,13 @@ class TransactionEntity extends AbstractEntity {
         return $this;
     }
 
-    public function getTypeTransaction(): TypeTransaction {
-        return $this->typetransaction;
+    public function getTypeTransaction(): object {
+        // Retourner un objet avec une propriété value pour compatibilité
+        return (object) ['value' => $this->typetransaction];
     }
 
-    public function setTypeTransaction(TypeTransaction $typetransaction): self {
+    public function setTypeTransaction(string $typetransaction): self {
         $this->typetransaction = $typetransaction;
-        return $this;
-    }
-
-    public function getUser(): ?UsersEntity {
-        return $this->user;
-    }
-
-    public function setUser(UsersEntity $user): self {
-        $this->user = $user;
         return $this;
     }
 

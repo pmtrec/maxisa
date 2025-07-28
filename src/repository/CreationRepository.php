@@ -2,66 +2,76 @@
 
 namespace PMT\SRC\REPOSITORY;
 
-use PMT\APP\CORE\Database;
+use PMT\APP\CORE\SupabaseClient;
 use PMT\SRC\Entity\CompteEntity;
-use \PDO;
+use Exception;
 
 class CreationRepository {
-
-    private PDO $db;
+    private SupabaseClient $supabase;
 
     public function __construct() {
-        $this->db = Database::getInstance()->getPDO(); // Connexion PDO OK
+        $this->supabase = SupabaseClient::getInstance();
     }
 
     public function createCompteSecondaireByUserId(int $userId, float|string $solde = 0.0, string $numTelephone): ?CompteEntity {
         try {
-            // Génération d’un numéro de compte unique automatiquement
+            // Génération d'un numéro de compte unique
             $numCompte = $this->generateUniqueNumCompte();
 
-            $sql = "INSERT INTO compte (num_compte, num_telephone, solde, user_id, type)
-                    VALUES (:num_compte, :num_telephone, :solde, :user_id, :type)";
+            $compteData = [
+                'num_compte' => $numCompte,
+                'num_telephone' => $numTelephone,
+                'solde' => floatval($solde),
+                'user_id' => $userId,
+                'type_type_compte_enum' => 'secondaire'
+            ];
 
-            $stmt = $this->db->prepare($sql);
+            $result = $this->supabase->insert('compte', $compteData);
 
-            $stmt->execute([
-                ':num_compte'     => $numCompte,
-                ':num_telephone'  => $numTelephone,
-                ':solde'          => floatval($solde),
-                ':user_id'        => $userId,
-                ':type'           => 'CompteSecondaire',
-            ]);
-
-            // Récupérer le dernier ID inséré
-            $lastId = $this->db->lastInsertId();
-
-            // Sélectionner l’objet inséré
-            $stmtSelect = $this->db->prepare("SELECT * FROM compte WHERE id = :id");
-            $stmtSelect->execute([':id' => $lastId]);
-            $data = $stmtSelect->fetch(PDO::FETCH_ASSOC);
-
-            if ($data) {
-                return CompteEntity::toObject($data);
+            if (!empty($result)) {
+                return CompteEntity::toObject($result[0]);
             }
 
             return null;
 
-        } catch (\PDOException $e) {
+        } catch (Exception $e) {
             error_log("Erreur création compte secondaire : " . $e->getMessage());
             return null;
         }
     }
 
-    // Génère un numéro de compte unique
+    /**
+     * Génère un numéro de compte unique
+     */
     private function generateUniqueNumCompte(): string {
+        $maxAttempts = 10;
+        $attempts = 0;
+
         do {
             $generated = 'CPT-' . str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+            
+            try {
+                // Vérifier si le numéro existe déjà
+                $existing = $this->supabase->select('compte', [
+                    'num_compte' => $generated
+                ], ['id']);
 
-            $stmt = $this->db->prepare("SELECT COUNT(*) FROM compte WHERE num_compte = :num");
-            $stmt->execute([':num' => $generated]);
-            $count = $stmt->fetchColumn();
+                $exists = !empty($existing);
+                $attempts++;
 
-        } while ($count > 0);
+                if ($attempts >= $maxAttempts) {
+                    throw new Exception("Impossible de générer un numéro de compte unique après $maxAttempts tentatives");
+                }
+
+            } catch (Exception $e) {
+                if (strpos($e->getMessage(), 'Impossible de générer') !== false) {
+                    throw $e;
+                }
+                // En cas d'erreur de requête, on considère que le numéro n'existe pas
+                $exists = false;
+            }
+
+        } while ($exists);
 
         return $generated;
     }

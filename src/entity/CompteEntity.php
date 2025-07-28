@@ -10,51 +10,51 @@ class CompteEntity extends AbstractEntity {
     private float $solde;
     private string $num_telephone;
     private string $date_creation;
-    private ?TypeCompte $TypeCompte;
+    private ?string $typeCompte;
     private ?UsersEntity $userr;
     private ?TransactionEntity $transaction;
 
     public function __construct(
-        ?int $id,
+        ?int $id = 0,
         string $num_compte = "",
         float $solde = 0.0,
-        string $num_telephone = "",              // Non nullable string
+        string $num_telephone = "",
         string $date_creation = "",
-        ?TypeCompte $TypeCompte = null,
+        ?string $typeCompte = null,
         ?UsersEntity $userr = null,
         ?TransactionEntity $transaction = null
     ) {
-        $this->id = $id;
+        $this->id = $id ?? 0;
         $this->num_compte = $num_compte;
         $this->solde = $solde;
         $this->num_telephone = $num_telephone;
         $this->date_creation = $date_creation;
-        $this->TypeCompte = $TypeCompte;
+        $this->typeCompte = $typeCompte;
         $this->userr = $userr;
         $this->transaction = $transaction;
     }
 
- public static function toArray(): array {
-    return [
-        "id" => $this->id,
-        "num_compte" => $this->num_compte,
-        "solde" => $this->solde,
-        "num_telephone" => $this->num_telephone,
-        "date_creation" => $this->date_creation,
-        "type" => $this->TypeCompte?->toArray(),
-        "users" => $this->userr?->toArray(),
-        "transaction" => $this->transaction?->toArray()
-    ];
-}
+    public static function toArray(): array {
+        return [
+            "id" => $this->id,
+            "num_compte" => $this->num_compte,
+            "solde" => $this->solde,
+            "num_telephone" => $this->num_telephone,
+            "date_creation" => $this->date_creation,
+            "type" => $this->typeCompte,
+            "users" => $this->userr?->toArray(),
+            "transaction" => $this->transaction?->toArray()
+        ];
+    }
 
     public static function toObject($data): static {
         return new static(
             $data["id"] ?? 0,
             $data["num_compte"] ?? "",
-            $data["solde"] ?? 0.0,
-            $data["num_telephone"] ?? "",         // <-- ici on remplace null par chaîne vide
-            $data["date_creation"] ?? "",
-            isset($data["TypeCompte"]) ? TypeCompte::toObject($data["TypeCompte"]) : null,
+            floatval($data["solde"] ?? 0.0),
+            $data["num_telephone"] ?? "",
+            $data["created_at"] ?? $data["date_creation"] ?? "",
+            $data["type_type_compte_enum"] ?? null,
             isset($data["userr"]) ? UsersEntity::toObject($data["userr"]) : null,
             isset($data["transaction"]) ? TransactionEntity::toObject($data["transaction"]) : null
         );
@@ -107,12 +107,12 @@ class CompteEntity extends AbstractEntity {
         return $this;
     }
 
-    public function getTypeCompte(): ?TypeCompte {
-        return $this->TypeCompte;
+    public function getTypeCompte(): ?string {
+        return $this->typeCompte;
     }
 
-    public function setTypeCompte(?TypeCompte $TypeCompte): self {
-        $this->TypeCompte = $TypeCompte;
+    public function setTypeCompte(?string $typeCompte): self {
+        $this->typeCompte = $typeCompte;
         return $this;
     }
 
@@ -133,6 +133,4 @@ class CompteEntity extends AbstractEntity {
         $this->transaction = $transaction;
         return $this;
     }
-
-    
 }
