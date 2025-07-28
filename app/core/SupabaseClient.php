@@ -34,7 +34,7 @@ class SupabaseClient {
     /**
      * Effectue une requête GET vers Supabase
      */
-    public function select(string $table, array $filters = [], array $select = ['*']): array {
+    public function select(string $table, array $filters = [], array $select = ['*'], array $options = []): array {
         $url = $this->supabaseUrl . "/rest/v1/" . $table;
         
         // Construire les paramètres de sélection
@@ -51,6 +51,14 @@ class SupabaseClient {
             } else {
                 $params[$column] = 'eq.' . $value;
             }
+        }
+
+        // Options supplémentaires (order, limit, etc.)
+        if (isset($options['order'])) {
+            $params['order'] = $options['order'];
+        }
+        if (isset($options['limit'])) {
+            $params['limit'] = $options['limit'];
         }
 
         $url .= '?' . http_build_query($params);
@@ -78,7 +86,12 @@ class SupabaseClient {
         // Ajouter les filtres dans l'URL
         $params = [];
         foreach ($filters as $column => $value) {
-            $params[$column] = 'eq.' . $value;
+            if (is_array($value)) {
+                $operator = $value['operator'] ?? 'eq';
+                $params[$column] = $operator . '.' . $value['value'];
+            } else {
+                $params[$column] = 'eq.' . $value;
+            }
         }
         
         if (!empty($params)) {
@@ -124,6 +137,33 @@ class SupabaseClient {
     }
 
     /**
+     * Inscription avec Supabase Auth
+     */
+    public function signUp(string $email, string $password, array $metadata = []): array {
+        $url = $this->supabaseUrl . "/auth/v1/signup";
+        
+        $data = [
+            'email' => $email,
+            'password' => $password
+        ];
+
+        if (!empty($metadata)) {
+            $data['data'] = $metadata;
+        }
+
+        return $this->makeRequest('POST', $url, $data);
+    }
+
+    /**
+     * Exécute une fonction RPC
+     */
+    public function rpc(string $functionName, array $params = []): array {
+        $url = $this->supabaseUrl . "/rest/v1/rpc/" . $functionName;
+        
+        return $this->makeRequest('POST', $url, $params);
+    }
+
+    /**
      * Effectue une requête HTTP vers Supabase
      */
     private function makeRequest(string $method, string $url, array $data = null, array $additionalHeaders = []): array {
@@ -144,7 +184,8 @@ class SupabaseClient {
             CURLOPT_HTTPHEADER => $headers,
             CURLOPT_CUSTOMREQUEST => $method,
             CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_TIMEOUT => 30
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_FOLLOWLOCATION => true
         ]);
 
         if ($data !== null && in_array($method, ['POST', 'PATCH', 'PUT'])) {
@@ -162,11 +203,12 @@ class SupabaseClient {
 
         if ($httpCode >= 400) {
             $errorData = json_decode($response, true);
-            $errorMessage = $errorData['message'] ?? 'Erreur HTTP ' . $httpCode;
-            throw new Exception("Erreur Supabase: " . $errorMessage);
+            $errorMessage = $errorData['message'] ?? $errorData['error_description'] ?? 'Erreur HTTP ' . $httpCode;
+            throw new Exception("Erreur Supabase ($httpCode): " . $errorMessage);
         }
 
-        return json_decode($response, true) ?? [];
+        $decodedResponse = json_decode($response, true);
+        return $decodedResponse ?? [];
     }
 
     public function getSupabaseUrl(): string {
@@ -175,5 +217,18 @@ class SupabaseClient {
 
     public function getSupabaseKey(): string {
         return $this->supabaseKey;
+    }
+
+    /**
+     * Test de connexion
+     */
+    public function testConnection(): bool {
+        try {
+            $this->select('typeuser', [], ['id'], ['limit' => 1]);
+            return true;
+        } catch (Exception $e) {
+            error_log("Test de connexion Supabase échoué: " . $e->getMessage());
+            return false;
+        }
     }
 }
